@@ -1,0 +1,12 @@
+rootProject.name = 'skyve-parent'
+include ':skyve-core'
+include ':skyve-ee'
+include ':skyve-ext'
+include ':skyve-web'
+include ':skyve-tools'
+
+project(':skyve-core').projectDir = "$rootDir/skyve-core" as File
+project(':skyve-ee').projectDir = "$rootDir/skyve-ee" as File
+project(':skyve-ext').projectDir = "$rootDir/skyve-ext" as File
+project(':skyve-web').projectDir = "$rootDir/skyve-web" as File
+project(':skyve-tools').projectDir = "$rootDir/skyve-tools" as File

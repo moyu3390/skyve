@@ -1,0 +1,17 @@
+sourceSets {
+    main {
+        java {
+            srcDirs = ["src"]
+        }
+    }
+}
+
+dependencies {
+    compile project(':skyve-core')
+    compile project(':skyve-ext')
+
+    compile "com.jaspersoft:ireport:${iReportVersion}"
+    compile "org.umlgraph:umlgraph:${umlgraphVersion}"
+    compile "org.opengeo:geodb:${geodbVersion}"
+    compile files("${System.getProperty('java.home')}/../lib/tools.jar")
+}

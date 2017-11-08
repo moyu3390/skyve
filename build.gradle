@@ -1,0 +1,81 @@
+allprojects  {
+    group = 'org.skyve'
+    version = '20171106'
+
+    ext {
+        asmVersion = '5.0.4'
+        atmosphereRuntimeVersion = '2.4.3'
+        bcmailJdk15Version = '1.45'
+        cglibVersion = '3.1'
+        commonsBeanUtilsVersion = '1.9.2'
+        commonsCodecVersion = '1.5'
+        commonsCollectionsVersion = '3.2.2'
+        commonsFileUploadVersion = '1.3.2'
+        commonsIoVersion = '2.2'
+        commonsLang3Version = '3.1'
+        commonsValidatorVersion = '1.5.1'
+        deltaspikeCoreVersion = '1.8.0'
+        ehcacheVersion = '2.0.1'
+        elasticsearchVersion = '1.4.2'
+        geodbVersion = '0.7'
+        h2Version = '1.3.173'
+        gsonVersion = '2.2.4'
+        hibernateVersion = '5.2.11.Final'
+        hibernateEntityManagerVersion = '5.2.11.Final'
+        hibernateSpatialVersion = '5.2.11.Final'
+        iReportVersion = '4.7.0'
+        groovyVersion = '2.3.2'
+        jaserReportsVersion = '6.3.1'
+        javaVersion = '1.8'
+        javaAssistVersion = '3.20.0-GA'
+        javaeeApiVersion = '7.0'
+        jtsVersion = '1.13'
+        luceneVersion = '4.10.2'
+        pdfBoxVersion = '1.8.4'
+        poiVersion = '3.10.1' // Version required by tika 1.5
+        primefacesVersion = '6.1'
+        primefacesExtensionsVersion = '6.1.0'
+        primefacesAllThemesVersion = '1.0.10'
+        quartzVersion = '1.7.2'
+        slf4jVersion = '1.5.8'
+        spatial4jVersion = '0.4.1'
+        superCsvVersion = '2.4.0'
+        thumbnailatorVersion = '0.4.8'
+        tikaVersion = '1.5' // Version required by elasticsearch 1.4.2
+        umlgraphVersion = '5.6.6'
+        userAgentUtilsVersion = '1.20'
+        xercesImplVersion = '2.8.1'
+        xmlBeansVersion = '2.6.0'
+        xmlschemaCoreVersion = '2.0.1'
+        generexVersion = '1.0.2'
+        junitVersion = '4.12'
+        mockitoVersion = '2.8.47'
+        hamcrestVersion = '1.3'
+        weldSeVersion = '2.4.4.Final'
+    }
+}
+
+subprojects {
+    apply plugin: 'java'
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    task packageSources(type: Jar) {
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+
+        maven { url "https://repo.maven.apache.org/maven2/" }
+        maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+        maven { url "http://repository.primefaces.org/" }
+        maven { url "http://download.osgeo.org/webdav/geotools/" }
+        maven { url "https://repo.boundlessgeo.com/main" }
+        maven { url "http://repo.skyve.org/repository/skyve/" }
+        maven { url "http://repo.maven.apache.org/maven2" }
+    }
+}

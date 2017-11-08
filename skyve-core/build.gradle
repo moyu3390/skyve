@@ -1,0 +1,19 @@
+sourceSets {
+    main {
+        java {
+            srcDirs = ["src"]
+        }
+    }
+}
+
+dependencies {
+    compile "javax:javaee-api:${javaeeApiVersion}"
+    compile "org.hibernate:hibernate-core:${hibernateVersion}"
+    compile "org.apache.deltaspike.core:deltaspike-core-api:${deltaspikeCoreVersion}"
+    compile "commons-beanutils:commons-beanutils:${commonsBeanUtilsVersion}"
+    compile "commons-collections:commons-collections:${commonsCollectionsVersion}"
+    compile "com.vividsolutions:jts:${jtsVersion}"
+    compile "org.apache.commons:commons-lang3:${commonsLang3Version}"
+    compile "commons-validator:commons-validator:${commonsValidatorVersion}"
+    compile "com.github.mifmif:generex:${generexVersion}"
+}

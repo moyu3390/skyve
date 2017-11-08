@@ -1,0 +1,20 @@
+dependencies {
+    compile project(':skyve-ext')
+
+    compile "org.apache.poi:poi-ooxml:${poiVersion}"
+    compile ("net.sf.jasperreports:jasperreports:${jaserReportsVersion}") {
+        exclude(module: 'spring-context')
+        exclude(module: 'bcmail-jdk14')
+        exclude(module: 'bcprov-jdk14')
+        exclude(module: 'xml-apis')
+        exclude(module: 'bctsp-jdk14')
+        exclude(module: 'jdtcore')
+        exclude(module: 'commons-beanutils')
+        exclude(module: 'commons-collections')
+        exclude(module: 'castor-xml')
+    }
+    compile "org.primefaces:primefaces:${primefacesVersion}"
+    compile "org.primefaces.extensions:primefaces-extensions:${primefacesExtensionsVersion}"
+    compile "net.coobird:thumbnailator:${thumbnailatorVersion}"
+    compile "net.sf.ehcache:ehcache-core:${ehcacheVersion}"
+}
