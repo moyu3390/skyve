@@ -16,12 +16,13 @@
 		<document ref="ChangePassword" />
 		<document ref="Configuration" />
 		<document ref="Contact" defaultQueryName="qContacts" />
+		<document ref="ControlPanel" />
 		<document ref="Content" />
 		<document ref="UserDashboard" />
 		<document ref="Communication" defaultQueryName="qCommunications" />
 		<document ref="DataGroup" />
 		<document ref="DataMaintenance" />
-		<document ref="DataMaintenanceModuleDocument"/>
+		<document ref="DataMaintenanceModuleDocument" />
 		<document ref="SystemDashboard" />
 		<document ref="DocumentNumber" />
 		<document ref="Group" />
@@ -29,6 +30,7 @@
 		<document ref="Job" defaultQueryName="qCompletedJobs" />
 		<document ref="JobSchedule" defaultQueryName="qAllSchedules" />
 		<document ref="Jobs" />
+		<document ref="ReportDesign" />
 		<document ref="Subscription"/>
 		<document ref="User" defaultQueryName="qUsers" />
 		<document ref="UserCandidateContact" />
@@ -195,24 +197,6 @@
 				<document name="Contact" permission="CRUDC" />
 				<document name="Content" permission="_R__C" />
 				<document name="DataGroup" permission="CRUDC" />
-				<document name="DataMaintenance" permission="CRUDC">
-					<action name="Backup" />
-					<action name="BackupSelected" />
-					<action name="ContentSelected" />
-					<action name="DataMaintenanceExportAction" />
-					<action name="DataMaintenanceImportAction" />
-					<action name="DeleteBackup" />
-					<action name="Reindex" />
-					<action name="Restore" />
-					<action name="Truncate" />
-					<action name="DownloadBackup" />
-					<action name="RefreshDocumentTuples" />
-					<action name="Create" />
-					<action name="Drop" />
-					<action name="Sync" />
-					<action name="UploadBackup" />
-				</document>
-				<document name="DataMaintenanceModuleDocument" permission="_RU_C"/>
 				<document name="SystemDashboard" permission="_____" />
 				<document name="DocumentNumber" permission="CRUDC" />
 				<document name="Group" permission="CRUDC" />
@@ -284,7 +268,43 @@
 					<action name="CheckAuditMatches"/>
 					<action name="TruncateAuditLog"/>
 				</document>
-		</privileges>
+			</privileges>
+		</role>
+		<role name="DevOps">
+			<description>
+				Generate skyve designs and metadata and administer technical aspects of the skyve runtime.
+			</description>
+			<privileges>
+				<document name="ControlPanel" permission="_____">
+					<action name="EvictFromCache" />
+					<action name="ExecuteQuery" />
+					<action name="GenerateEditView" />
+					<action name="GenerateQuery" />
+					<action name="SendMail" />
+					<action name="SwapCustomer" />
+				</document>
+				<document name="DataMaintenance" permission="CRUDC">
+					<action name="Backup" />
+					<action name="BackupSelected" />
+					<action name="ContentSelected" />
+					<action name="DataMaintenanceExportAction" />
+					<action name="DataMaintenanceImportAction" />
+					<action name="DeleteBackup" />
+					<action name="Reindex" />
+					<action name="Restore" />
+					<action name="Truncate" />
+					<action name="DownloadBackup" />
+					<action name="RefreshDocumentTuples" />
+					<action name="Create" />
+					<action name="Drop" />
+					<action name="Sync" />
+					<action name="UploadBackup" />
+				</document>
+				<document name="DataMaintenanceModuleDocument" permission="_RU_C"/>
+				<document name="ReportDesign" permission="_____">
+					<action name="GenerateDefault" />
+				</document>
+			</privileges>
 		</role>
 	</roles>
 	<menu>
@@ -311,11 +331,6 @@
 			<list document="Group" name="Groups">
 				<role name="SecurityAdministrator" />
 			</list>
-			<edit document="DataMaintenance" name="Data Maintenance">
-				<uxui name="desktop" />
-				<uxui name="tablet" />
-				<role name="SecurityAdministrator" />
-			</edit>
 			<list document="User" name="Users">
 				<role name="SecurityAdministrator" />
 			</list>
@@ -326,6 +341,21 @@
 			</list>
 			<edit document="Configuration" name="Password Complexity">
 				<role name="SecurityAdministrator" />
+			</edit>
+		</group>
+		<group name="DevOps">
+			<edit document="ControlPanel" name="Control Panel">
+				<uxui name="desktop" />
+				<role name="DevOps" />
+			</edit>
+			<edit document="DataMaintenance" name="Data Maintenance">
+				<uxui name="desktop" />
+				<uxui name="tablet" />
+				<role name="DevOps" />
+			</edit>
+			<edit document="ReportDesign" name="Report Design">
+				<uxui name="desktop" />
+				<role name="DevOps" />
 			</edit>
 		</group>
 		<list name="Snapshots" document="Snapshot">
