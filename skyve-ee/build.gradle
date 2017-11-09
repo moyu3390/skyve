@@ -184,5 +184,5 @@ task generateDomain(type: JavaExec) {
     main = 'org.skyve.impl.generate.DomainGenerator'
 
     // arguments to pass to the application
-    args = ["src/skyve/", "src/test", "src/generatedTest"]
+    args = ["src/skyve/", "src/test/", "src/generatedTest/", "true", "true", "false", "0", "test,whosin,whosinintegrate"]
 }
