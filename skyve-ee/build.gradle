@@ -147,10 +147,12 @@ dependencies {
     // Assertions are being used in src main
     compileOnly "junit:junit:${junitVersion}"
 
+    testCompile project(":skyve-web")
     testCompile "junit:junit:${junitVersion}"
     testCompile "org.mockito:mockito-core:${mockitoVersion}"
     testCompile "org.hamcrest:hamcrest-library:${hamcrestVersion}"
     testCompile "org.jboss.weld.se:weld-se:${weldSeVersion}"
+    testCompile "javax:javaee-api:${javaeeApiVersion}"
 }
 
 task clearAllDependencies(type: Delete) {
