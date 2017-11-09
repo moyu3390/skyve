@@ -1,4 +1,4 @@
-rootProject.name = 'skyve-parent'
+rootProject.name = 'skyve'
 include ':skyve-core'
 include ':skyve-ee'
 include ':skyve-ext'
