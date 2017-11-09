@@ -1,4 +1,6 @@
 allprojects  {
+    apply plugin: 'maven'
+
     group = 'org.skyve'
     version = '20171106'
 
@@ -77,5 +79,14 @@ subprojects {
         maven { url "https://repo.boundlessgeo.com/main" }
         maven { url "http://repo.skyve.org/repository/skyve/" }
         maven { url "http://repo.maven.apache.org/maven2" }
+    }
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: "http://repo.skyve.org/repository/maven-releases/")
+            repository(url: "http://repo.skyve.org/repository/maven-snapshots/")
+        }
     }
 }
