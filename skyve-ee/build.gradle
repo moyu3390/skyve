@@ -35,6 +35,8 @@ dependencies {
     runtime project(":skyve-core")
     runtime project(":skyve-ext")
 
+    compileOnly project(":skyve-tools")
+
     warLib project(":skyve-web")
     warLib "org.atmosphere:atmosphere-runtime:${atmosphereRuntimeVersion}"
     warLib "commons-fileupload:commons-fileupload:${commonsFileUploadVersion}"
@@ -179,10 +181,77 @@ task touch {
 }
 
 task generateDomain(type: JavaExec) {
-    classpath = fileTree(dir: 'javaee/lib', include: '**/*.jar') + sourceSets.main.runtimeClasspath
+    classpath = sourceSets.main.runtimeClasspath
 
     main = 'org.skyve.impl.generate.DomainGenerator'
 
     // arguments to pass to the application
-    args = ["src/skyve/", "src/test/", "src/generatedTest/", "true", "true", "false", "0", "test,whosin,whosinintegrate"]
+    args = ["src/skyve/", // source path
+            "src/test/", // test path
+            "src/generatedTest/", // generated test path
+            "true", // debug
+            "true", // data store index foreign keys by default
+            "false", // data store index names in global namespace
+            "0", // data store identifier character limit
+            "test,whosin,whosinintegrate"] // excluded modules
+}
+
+task generateEditView(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+
+    main = 'org.skyve.impl.generate.ViewGenerator'
+
+    // arguments to pass to the application
+    args = ["src/skyve/", // source path
+            "bizhub", // customerName
+            "admin", // moduleName
+            "UserCandidateContact", // documentName
+            "false", // customer overridden view
+            ""] // uxui overridden view name
+}
+
+task generateDefaultQueries(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+
+    main = 'org.skyve.impl.generate.QueryGenerator'
+
+    // arguments to pass to the application
+    args = ["bizhub", // customer name
+            "admin"] // module name
+}
+
+task javadocWebsite(type: JavaExec) {
+    classpath = sourceSets.main.compileClasspath + sourceSets.main.runtimeClasspath
+
+    main = 'org.skyve.impl.tools.javadoc.doctor.DoctorUtil'
+
+    // arguments to pass to the application
+    args = ["src/skyve/", // source path
+            "bizhub", // customer name
+            "admin"]
+}
+
+task deprecationReport(type: JavaExec) {
+    classpath = sourceSets.main.compileClasspath + sourceSets.main.runtimeClasspath
+
+    main = 'modules.DeprecationReport'
+
+    // arguments to pass to the application
+    args = ["src/skyve/", // source path
+            "bizhub", // customer name
+            "admin"]
+}
+
+task buildXmlSchemas(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+
+    main = 'org.skyve.impl.util.XMLMetaData'
+
+    doLast {
+        fileTree('.') {
+            include '*.xsd'
+        }.each { File file ->
+            ant.move(file: file, todir: sourceSets.main.java.srcDirs[0])
+        }
+    }
 }
