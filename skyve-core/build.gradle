@@ -7,7 +7,7 @@ sourceSets {
 }
 
 dependencies {
-    compile "javax:javaee-api:${javaeeApiVersion}"
+    compileOnly "javax:javaee-api:${javaeeApiVersion}"
     compile "org.hibernate:hibernate-core:${hibernateVersion}"
     compile "org.apache.deltaspike.core:deltaspike-core-api:${deltaspikeCoreVersion}"
     compile "commons-beanutils:commons-beanutils:${commonsBeanUtilsVersion}"

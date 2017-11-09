@@ -1,6 +1,7 @@
 dependencies {
     compile project(':skyve-ext')
 
+    compileOnly "javax:javaee-api:${javaeeApiVersion}"
     compile "org.apache.poi:poi-ooxml:${poiVersion}"
     compile ("net.sf.jasperreports:jasperreports:${jaserReportsVersion}") {
         exclude(module: 'spring-context')

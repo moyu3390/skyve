@@ -10,9 +10,10 @@ dependencies {
     compile project(':skyve-core')
 
     compile "org.hibernate:hibernate-core:${hibernateVersion}"
-    compile "org.hibernate:hibernate-entitymanager:${hibernateEntityManagerVersion}"
+    compile ("org.hibernate:hibernate-entitymanager:${hibernateEntityManagerVersion}") {
+        exclude group: "net.bytebuddy", module: "byte-buddy"
+    }
     compile "org.hibernate:hibernate-spatial:${hibernateSpatialVersion}"
-
     compile "org.apache.poi:poi:${poiVersion}"
     compile "org.apache.poi:poi-ooxml:${poiVersion}"
     compile "commons-codec:commons-codec:${commonsCodecVersion}"
@@ -29,7 +30,7 @@ dependencies {
         exclude group: "commons-collections", module: "commons-collections"
         exclude group: "org.codehaus.castor", module: "castor-xml"
     }
-    compile "javax:javaee-api:${javaeeApiVersion}"
+    compileOnly "javax:javaee-api:${javaeeApiVersion}"
     compile "org.apache.deltaspike.core:deltaspike-core-api:${deltaspikeCoreVersion}"
     compile "org.javassist:javassist:${javaAssistVersion}"
     compile "org.quartz-scheduler:quartz:${quartzVersion}"

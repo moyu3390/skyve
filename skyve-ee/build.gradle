@@ -1,5 +1,3 @@
-apply plugin: 'war'
-
 ext {
     javaeePath = "javaee"
     earPath = "${javaeePath}/skyve.ear"
@@ -26,8 +24,24 @@ sourceSets {
     }
 }
 
+configurations {
+    warLib {
+        transitive = false
+    }
+    compileOnly.extendsFrom warLib
+}
+
 dependencies {
-    compile project(":skyve-web")
+    runtime project(":skyve-core")
+    runtime project(":skyve-ext")
+
+    warLib project(":skyve-web")
+    warLib "org.atmosphere:atmosphere-runtime:${atmosphereRuntimeVersion}"
+    warLib "commons-fileupload:commons-fileupload:${commonsFileUploadVersion}"
+    warLib "com.google.code.gson:gson:${gsonVersion}"
+    warLib "org.primefaces:primefaces:${primefacesVersion}"
+    warLib "org.primefaces.extensions:primefaces-extensions:${primefacesExtensionsVersion}"
+    warLib "org.primefaces.themes:all-themes:${primefacesAllThemesVersion}"
 
     compile "commons-collections:commons-collections:${commonsCollectionsVersion}"
     compile "commons-validator:commons-validator:${commonsValidatorVersion}"
@@ -61,12 +75,6 @@ dependencies {
         exclude group: "org.codehaus.castor", module: "castor-xml"
     }
     compile "org.bouncycastle:bcmail-jdk15:${bcmailJdk15Version}"
-    compile "org.primefaces.themes:all-themes:${primefacesAllThemesVersion}"
-    compile "org.atmosphere:atmosphere-runtime:${atmosphereRuntimeVersion}"
-    compile "commons-fileupload:commons-fileupload:${commonsFileUploadVersion}"
-    compile "com.google.code.gson:gson:${gsonVersion}"
-    compile "org.primefaces:primefaces:${primefacesVersion}"
-    compile "org.primefaces.extensions:primefaces-extensions:${primefacesExtensionsVersion}"
     compile "org.apache.lucene:lucene-analyzers-common:${luceneVersion}"
     compile "org.apache.lucene:lucene-core:${luceneVersion}"
     compile "org.apache.lucene:lucene-expressions:${luceneVersion}"
@@ -134,7 +142,8 @@ dependencies {
         exclude group: "javax.activation", module: "activation"
     }
 
-    compile "junit:junit:${junitVersion}" // Assertions are being used in src main
+    // Assertions are being used in src main
+    compileOnly "junit:junit:${junitVersion}"
 
     testCompile "junit:junit:${junitVersion}"
     testCompile "org.mockito:mockito-core:${mockitoVersion}"
@@ -142,12 +151,30 @@ dependencies {
     testCompile "org.jboss.weld.se:weld-se:${weldSeVersion}"
 }
 
+task clearAllDependencies(type: Delete) {
+    delete "$earPath/lib"
+    delete "$warPath/WEB-INF/lib"
+}
+clean.dependsOn clearAllDependencies
+
+task copyEarLibDependencies(type: Copy) {
+    into "$earPath/lib/"
+    from configurations.runtime
+}
+build.dependsOn copyEarLibDependencies
+
+task copyWarLibDependencies(type: Copy) {
+    into "$warPath/WEB-INF/lib/"
+    from configurations.warLib
+}
+build.dependsOn copyWarLibDependencies
+
 task touch {
     doLast {
         delete fileTree(javaeePath) {
             include '**/*.failed'
         }
-        ant.touch(file:"${earPath}.dodeploy")
+        ant.touch(file: "${earPath}.dodeploy")
     }
 }
 
