@@ -39,4 +39,5 @@ dependencies {
     compile "org.apache.tika:tika-core:${tikaVersion}"
     compile "eu.bitwalker:UserAgentUtils:${userAgentUtilsVersion}"
     compile "org.elasticsearch:elasticsearch:${elasticsearchVersion}"
+    compile "net.coobird:thumbnailator:${thumbnailatorVersion}"
 }
