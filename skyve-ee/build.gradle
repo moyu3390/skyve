@@ -8,13 +8,19 @@ sourceSets {
     main {
         java {
             srcDirs = ["src/skyve"]
-            output.classesDir = "javaee/skyve.ear/apps.jar"
+            output.classesDir = "$earPath/apps.jar"
         }
 
         resources {
             srcDirs = ["src/skyve"]
             exclude "**/*.java"
-            output.resourcesDir = "javaee/skyve.ear/apps.jar"
+            output.resourcesDir = "$earPath/apps.jar"
+        }
+    }
+    web {
+        java {
+            srcDirs = ['src/web']
+            output.classesDir = "$warPath/WEB-INF/classes"
         }
     }
     test {
@@ -23,6 +29,8 @@ sourceSets {
         }
     }
 }
+
+assemble.dependsOn compileWebJava
 
 configurations {
     warLib {
@@ -36,6 +44,10 @@ dependencies {
     runtime project(":skyve-ext")
 
     compileOnly project(":skyve-tools")
+
+    webCompile sourceSets.main.output
+    webCompile project(":skyve-web")
+    webCompileOnly "javax:javaee-api:${javaeeApiVersion}"
 
     warLib project(":skyve-web")
     warLib "org.atmosphere:atmosphere-runtime:${atmosphereRuntimeVersion}"
@@ -165,13 +177,13 @@ task copyEarLibDependencies(type: Copy) {
     into "$earPath/lib/"
     from configurations.runtime
 }
-build.dependsOn copyEarLibDependencies
+assemble.dependsOn copyEarLibDependencies
 
 task copyWarLibDependencies(type: Copy) {
     into "$warPath/WEB-INF/lib/"
     from configurations.warLib
 }
-build.dependsOn copyWarLibDependencies
+assemble.dependsOn copyWarLibDependencies
 
 task touch {
     doLast {

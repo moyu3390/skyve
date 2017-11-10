@@ -1,5 +1,6 @@
 allprojects  {
     apply plugin: 'maven'
+    apply plugin: 'eclipse'
 
     group = 'org.skyve'
     version = '20171106'
