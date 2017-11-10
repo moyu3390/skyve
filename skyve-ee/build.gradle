@@ -1,3 +1,6 @@
+apply plugin: 'ear'
+apply plugin: 'war'
+
 ext {
     javaeePath = "javaee"
     earPath = "${javaeePath}/skyve.ear"
@@ -32,6 +35,48 @@ sourceSets {
 
 assemble.dependsOn compileWebJava
 
+war {
+    archiveName 'skyve.war'
+
+    from (warPath) {
+        include '**/*.html'
+        include '**/*.xhtml'
+        include '**/*.jsp'
+        include '**/*.js'
+        include '**/*.gif'
+        exclude 'WEB-INF'
+    }
+
+    into ('WEB-INF') {
+        from ("$warPath/WEB-INF") {
+            include 'faces-config.xml'
+            include 'jboss-classloading.xml'
+        }
+    }
+
+    into ('WEB-INF/resources') {
+        from ("$warPath/WEB-INF/resources")
+    }
+}
+
+ear {
+    archiveName 'skyve.ear'
+
+    into ('META-INF') {
+        from ("$earPath/META-INF") {
+            exclude 'application.xml'
+        }
+    }
+
+    from war.archivePath
+
+    deploymentDescriptor {
+        displayName = "skyve"
+    }
+
+    dependsOn war
+}
+
 configurations {
     warLib {
         transitive = false
@@ -40,44 +85,31 @@ configurations {
 }
 
 dependencies {
-    runtime project(":skyve-core")
-    runtime project(":skyve-ext")
+    /* earlib dependencies are copied into ear/lib */
+    earlib project(":skyve-core")
+    earlib project(":skyve-ext")
 
-    compileOnly project(":skyve-tools")
-
-    webCompile sourceSets.main.output
-    webCompile project(":skyve-web")
-    webCompileOnly "javax:javaee-api:${javaeeApiVersion}"
-
-    warLib project(":skyve-web")
-    warLib "org.atmosphere:atmosphere-runtime:${atmosphereRuntimeVersion}"
-    warLib "commons-fileupload:commons-fileupload:${commonsFileUploadVersion}"
-    warLib "com.google.code.gson:gson:${gsonVersion}"
-    warLib "org.primefaces:primefaces:${primefacesVersion}"
-    warLib "org.primefaces.extensions:primefaces-extensions:${primefacesExtensionsVersion}"
-    warLib "org.primefaces.themes:all-themes:${primefacesAllThemesVersion}"
-
-    compile "commons-collections:commons-collections:${commonsCollectionsVersion}"
-    compile "commons-validator:commons-validator:${commonsValidatorVersion}"
-    compile "net.coobird:thumbnailator:${thumbnailatorVersion}"
-    compile "net.sf.ehcache:ehcache-core:${ehcacheVersion}"
-    compile "eu.bitwalker:UserAgentUtils:${userAgentUtilsVersion}"
-    compile "org.elasticsearch:elasticsearch:${elasticsearchVersion}"
-    compile "org.apache.tika:tika-core:${tikaVersion}"
-    compile ("org.apache.tika:tika-parsers:${tikaVersion}") {
+    earlib "commons-collections:commons-collections:${commonsCollectionsVersion}"
+    earlib "commons-validator:commons-validator:${commonsValidatorVersion}"
+    earlib "net.coobird:thumbnailator:${thumbnailatorVersion}"
+    earlib "net.sf.ehcache:ehcache-core:${ehcacheVersion}"
+    earlib "eu.bitwalker:UserAgentUtils:${userAgentUtilsVersion}"
+    earlib "org.elasticsearch:elasticsearch:${elasticsearchVersion}"
+    earlib "org.apache.tika:tika-core:${tikaVersion}"
+    earlib ("org.apache.tika:tika-parsers:${tikaVersion}") {
         exclude group: "org.ow2.asm", module: "asm-debug-all"
         exclude group: "edu.ucar", module: "netcdf"
     }
-    compile "org.hibernate:hibernate-core:${hibernateVersion}"
-    compile "org.hibernate:hibernate-entitymanager:${hibernateEntityManagerVersion}"
-    compile "org.hibernate:hibernate-spatial:${hibernateSpatialVersion}"
-    compile "cglib:cglib:${cglibVersion}"
-    compile "org.ow2.asm:asm:${asmVersion}"
-    compile ("org.ow2.asm:asm-commons:${asmVersion}") {
+    earlib "org.hibernate:hibernate-core:${hibernateVersion}"
+    earlib "org.hibernate:hibernate-entitymanager:${hibernateEntityManagerVersion}"
+    earlib "org.hibernate:hibernate-spatial:${hibernateSpatialVersion}"
+    earlib "cglib:cglib:${cglibVersion}"
+    earlib "org.ow2.asm:asm:${asmVersion}"
+    earlib ("org.ow2.asm:asm-commons:${asmVersion}") {
         exclude group: "org.ow2.asm", module: "asm-tree"
     }
-    compile "org.codehaus.groovy:groovy-all:${groovyVersion}"
-    compile ("net.sf.jasperreports:jasperreports:${jaserReportsVersion}") {
+    earlib "org.codehaus.groovy:groovy-all:${groovyVersion}"
+    earlib ("net.sf.jasperreports:jasperreports:${jaserReportsVersion}") {
         exclude group: "org.springframework", module: "spring-context"
         exclude group: "bouncycastle", module: "bcmail-jdk14"
         exclude group: "bouncycastle", module: "bcprov-jdk14"
@@ -88,74 +120,90 @@ dependencies {
         exclude group: "commons-collections", module: "commons-collections"
         exclude group: "org.codehaus.castor", module: "castor-xml"
     }
-    compile "org.bouncycastle:bcmail-jdk15:${bcmailJdk15Version}"
-    compile "org.apache.lucene:lucene-analyzers-common:${luceneVersion}"
-    compile "org.apache.lucene:lucene-core:${luceneVersion}"
-    compile "org.apache.lucene:lucene-expressions:${luceneVersion}"
-    compile "org.apache.lucene:lucene-grouping:${luceneVersion}"
-    compile "org.apache.lucene:lucene-highlighter:${luceneVersion}"
-    compile "org.apache.lucene:lucene-join:${luceneVersion}"
-    compile "org.apache.lucene:lucene-memory:${luceneVersion}"
-    compile "org.apache.lucene:lucene-misc:${luceneVersion}"
-    compile "org.apache.lucene:lucene-queries:${luceneVersion}"
-    compile "org.apache.lucene:lucene-queryparser:${luceneVersion}"
-    compile ("org.apache.lucene:lucene-sandbox:${luceneVersion}") {
+    earlib "org.bouncycastle:bcmail-jdk15:${bcmailJdk15Version}"
+    earlib "org.apache.lucene:lucene-analyzers-common:${luceneVersion}"
+    earlib "org.apache.lucene:lucene-core:${luceneVersion}"
+    earlib "org.apache.lucene:lucene-expressions:${luceneVersion}"
+    earlib "org.apache.lucene:lucene-grouping:${luceneVersion}"
+    earlib "org.apache.lucene:lucene-highlighter:${luceneVersion}"
+    earlib "org.apache.lucene:lucene-join:${luceneVersion}"
+    earlib "org.apache.lucene:lucene-memory:${luceneVersion}"
+    earlib "org.apache.lucene:lucene-misc:${luceneVersion}"
+    earlib "org.apache.lucene:lucene-queries:${luceneVersion}"
+    earlib "org.apache.lucene:lucene-queryparser:${luceneVersion}"
+    earlib ("org.apache.lucene:lucene-sandbox:${luceneVersion}") {
         exclude group: "jakarta-regexp", module: "jakarta-regexp"
     }
-    compile "org.apache.lucene:lucene-spatial:${luceneVersion}"
-    compile "org.apache.lucene:lucene-suggest:${luceneVersion}"
-    compile "org.apache.poi:poi:${poiVersion}"
-    compile "com.spatial4j:spatial4j:${spatial4jVersion}"
-    compile ("xerces:xercesImpl:${xercesImplVersion}") {
+    earlib "org.apache.lucene:lucene-spatial:${luceneVersion}"
+    earlib "org.apache.lucene:lucene-suggest:${luceneVersion}"
+    earlib "org.apache.poi:poi:${poiVersion}"
+    earlib "com.spatial4j:spatial4j:${spatial4jVersion}"
+    earlib ("xerces:xercesImpl:${xercesImplVersion}") {
         exclude group: "xml-apis", module: "xml-apis"
     }
-    compile "org.apache.xmlbeans:xmlbeans:${xmlBeansVersion}"
-    compile "org.apache.ws.xmlschema:xmlschema-core:${xmlschemaCoreVersion}"
-    compile "com.vividsolutions:jts:${jtsVersion}"
-    compile "org.quartz-scheduler:quartz:${quartzVersion}"
-    compile "org.apache.deltaspike.core:deltaspike-core-api:${deltaspikeCoreVersion}"
+    earlib "org.apache.xmlbeans:xmlbeans:${xmlBeansVersion}"
+    earlib "org.apache.ws.xmlschema:xmlschema-core:${xmlschemaCoreVersion}"
+    earlib "com.vividsolutions:jts:${jtsVersion}"
+    earlib "org.quartz-scheduler:quartz:${quartzVersion}"
+    earlib "org.apache.deltaspike.core:deltaspike-core-api:${deltaspikeCoreVersion}"
 
-    runtime "org.slf4j:slf4j-log4j12:1.5.6"
-    runtime "org.apache.james:apache-mime4j-core:0.7.2"
-    runtime "org.apache.james:apache-mime4j-dom:0.7.2"
-    runtime "org.aspectj:aspectjrt:1.6.11"
-    runtime "de.l3s.boilerpipe:boilerpipe:1.1.0"
-    runtime "org.dspace.xmlui.concurrent:concurrent:1.3.4"
-    runtime "org.apache.pdfbox:fontbox:${pdfBoxVersion}"
-    runtime "org.opengeo:geodb:${geodbVersion}"
-    runtime "net.sourceforge.hatbox:hatbox:1.0.b7"
-    runtime "com.googlecode.mp4parser:isoparser:1.0-RC-1"
-    runtime "jdom:jdom:1.0"
-    runtime ("com.uwyn:jhighlight:1.0") {
+    earlib "org.slf4j:slf4j-log4j12:1.5.6"
+    earlib "org.apache.james:apache-mime4j-core:0.7.2"
+    earlib "org.apache.james:apache-mime4j-dom:0.7.2"
+    earlib "org.aspectj:aspectjrt:1.6.11"
+    earlib "de.l3s.boilerpipe:boilerpipe:1.1.0"
+    earlib "org.dspace.xmlui.concurrent:concurrent:1.3.4"
+    earlib "org.apache.pdfbox:fontbox:${pdfBoxVersion}"
+    earlib "org.opengeo:geodb:${geodbVersion}"
+    earlib "net.sourceforge.hatbox:hatbox:1.0.b7"
+    earlib "com.googlecode.mp4parser:isoparser:1.0-RC-1"
+    earlib "jdom:jdom:1.0"
+    earlib ("com.uwyn:jhighlight:1.0") {
         exclude group: "javax.servlet", module: "servlet-api"
     }
-    runtime "net.java.dev.jna:jna:4.1.0"
-    runtime "com.googlecode.juniversalchardet:juniversalchardet:1.0.3"
-    runtime "net.sourceforge.jexcelapi:jxl:2.6.10"
-    runtime "net.sf.supercsv:super-csv:2.4.0"
-    runtime "com.drewnoakes:metadata-extractor:2.6.2"
-    runtime ("org.apache.neethi:neethi:3.0.1") {
+    earlib "net.java.dev.jna:jna:4.1.0"
+    earlib "com.googlecode.juniversalchardet:juniversalchardet:1.0.3"
+    earlib "net.sourceforge.jexcelapi:jxl:2.6.10"
+    earlib "net.sf.supercsv:super-csv:2.4.0"
+    earlib "com.drewnoakes:metadata-extractor:2.6.2"
+    earlib ("org.apache.neethi:neethi:3.0.1") {
         exclude group: "org.codehaus.woodstox", module: "woodstox-core-asl"
     }
-    runtime "net.sourceforge.nekohtml:nekohtml:1.9.7"
-    runtime "org.apache.pdfbox:pdfbox:${pdfBoxVersion}"
-    runtime "org.apache.poi:poi-ooxml:${poiVersion}"
-    runtime "org.apache.poi:poi-ooxml-schemas:${poiVersion}"
-    runtime "org.apache.poi:poi-scratchpad:${poiVersion}"
-    runtime "net.sf.qualitycheck:quality-check:1.3"
-    runtime "rome:rome:0.9"
-    runtime "org.ccil.cowan.tagsoup:tagsoup:1.2.1"
-    runtime "org.gagravarr:vorbis-java-core:0.1"
-    runtime "org.gagravarr:vorbis-java-tika:0.1"
-    runtime "wsdl4j:wsdl4j:1.6.2"
-    runtime "org.tukaani:xz:1.2"
-    runtime "com.h2database:h2:${h2Version}"
+    earlib "net.sourceforge.nekohtml:nekohtml:1.9.7"
+    earlib "org.apache.pdfbox:pdfbox:${pdfBoxVersion}"
+    earlib "org.apache.poi:poi-ooxml:${poiVersion}"
+    earlib "org.apache.poi:poi-ooxml-schemas:${poiVersion}"
+    earlib "org.apache.poi:poi-scratchpad:${poiVersion}"
+    earlib "net.sf.qualitycheck:quality-check:1.3"
+    earlib "rome:rome:0.9"
+    earlib "org.ccil.cowan.tagsoup:tagsoup:1.2.1"
+    earlib "org.gagravarr:vorbis-java-core:0.1"
+    earlib "org.gagravarr:vorbis-java-tika:0.1"
+    earlib "wsdl4j:wsdl4j:1.6.2"
+    earlib "org.tukaani:xz:1.2"
+    earlib "com.h2database:h2:${h2Version}"
 
+    webCompile sourceSets.main.output
+    webCompile project(":skyve-web")
+    webCompileOnly "javax:javaee-api:${javaeeApiVersion}"
+
+    /* runtime dependencies are copied into war/WEB-INF/lib */
+    runtime (project(":skyve-web")) {
+        transitive = false
+    }
+    runtime "org.atmosphere:atmosphere-runtime:${atmosphereRuntimeVersion}"
+    runtime "commons-fileupload:commons-fileupload:${commonsFileUploadVersion}"
+    runtime "com.google.code.gson:gson:${gsonVersion}"
+    runtime "org.primefaces:primefaces:${primefacesVersion}"
+    runtime "org.primefaces.extensions:primefaces-extensions:${primefacesExtensionsVersion}"
+    runtime "org.primefaces.themes:all-themes:${primefacesAllThemesVersion}"
+
+    /* compileOnly dependencies are used for compilation purposed only */
+    compileOnly project(":skyve-tools")
     compileOnly ("javax:javaee-api:${javaeeApiVersion}") {
         exclude group: "com.sun.mail", module: "javax.mail"
         exclude group: "javax.activation", module: "activation"
     }
-
     // Assertions are being used in src main
     compileOnly "junit:junit:${junitVersion}"
 
@@ -175,13 +223,13 @@ clean.dependsOn clearAllDependencies
 
 task copyEarLibDependencies(type: Copy) {
     into "$earPath/lib/"
-    from configurations.runtime
+    from configurations.earlib
 }
 assemble.dependsOn copyEarLibDependencies
 
 task copyWarLibDependencies(type: Copy) {
     into "$warPath/WEB-INF/lib/"
-    from configurations.warLib
+    from configurations.runtime
 }
 assemble.dependsOn copyWarLibDependencies
 
