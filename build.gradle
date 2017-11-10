@@ -80,6 +80,7 @@ subprojects {
         maven { url "https://repo.boundlessgeo.com/main" }
         maven { url "http://repo.skyve.org/repository/skyve/" }
         maven { url "http://repo.maven.apache.org/maven2" }
+        maven { url "http://jaspersoft.artifactoryonline.com/jaspersoft/third-party-ce-artifacts" }
     }
 }
 
