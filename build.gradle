@@ -3,7 +3,7 @@ allprojects  {
     apply plugin: 'eclipse'
 
     group = 'org.skyve'
-    version = '20171106'
+    version = '20171113'
 
     ext {
         asmVersion = '5.0.4'
