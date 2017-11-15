@@ -38,6 +38,8 @@ assemble.dependsOn compileWebJava
 war {
     archiveName 'skyve.war'
 
+    classpath = sourceSets.web.output.classesDirs
+
     from (warPath) {
         include '**/*.html'
         include '**/*.xhtml'
@@ -51,6 +53,9 @@ war {
         from ("$warPath/WEB-INF") {
             include 'faces-config.xml'
             include 'jboss-classloading.xml'
+            // TODO: Why aren't these two copied in the ant script?
+            include 'jboss-web.xml'
+            include 'web.xml'
         }
     }
 
