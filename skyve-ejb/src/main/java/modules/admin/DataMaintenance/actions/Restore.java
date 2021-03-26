@@ -14,33 +14,84 @@ import org.skyve.metadata.module.Module;
 import org.skyve.metadata.user.User;
 import org.skyve.web.WebContext;
 
+import org.skyve.EXT;
+import org.skyve.job.JobDescription;
+import modules.admin.ModulesUtil;
+
+import java.util.Locale;
+import java.util.ResourceBundle;
+import java.util.logging.Logger;
+import java.util.logging.Level;
+
+import org.skyve.domain.messages.ValidationException;
+
 import modules.admin.domain.DataMaintenance;
 
 public class Restore implements ServerSideAction<DataMaintenance> {
 	private static final long serialVersionUID = 8521252561712649481L;
+	private static final Logger logger = Logger.getLogger(Restore.class.getName());
+
+	private static final ResourceBundle messages = ResourceBundle.getBundle("resources.i18n", Locale.getDefault());
 
 	@Override
-	public ServerSideActionResult<DataMaintenance> execute(DataMaintenance bean, WebContext webContext)
-	throws Exception {
-		User u = CORE.getUser();
-		Customer c = u.getCustomer();
-		Module m = c.getModule(DataMaintenance.MODULE_NAME);
-		
-		if (bean.getRestorePreProcess() == null) {
-			Document d = m.getDocument(c, DataMaintenance.DOCUMENT_NAME);
-			
-			StringBuilder sb = new StringBuilder(64);
-			sb.append("You must select a ");
-			sb.append(d.getAttribute(DataMaintenance.restorePreProcessPropertyName).getLocalisedDisplayName());
-			sb.append(" before you can perform this action.");
-			
-			throw new ValidationException(new Message(DataMaintenance.restorePreProcessPropertyName, sb.toString()));
+	public ServerSideActionResult<DataMaintenance> execute(DataMaintenance bean, WebContext webContext) throws Exception {
+
+		if(isNoRestoreJobRunning())
+		{
+			User u = CORE.getUser();
+			Customer c = u.getCustomer();
+			Module m = c.getModule(DataMaintenance.MODULE_NAME);
+
+			if (bean.getRestorePreProcess() == null) {
+				Document d = m.getDocument(c, DataMaintenance.DOCUMENT_NAME);
+
+				StringBuilder sb = new StringBuilder(64);
+				sb.append("You must select a ");
+				sb.append(d.getAttribute(DataMaintenance.restorePreProcessPropertyName).getLocalisedDisplayName());
+				sb.append(" before you can perform this action.");
+
+				throw new ValidationException(new Message(DataMaintenance.restorePreProcessPropertyName, sb.toString()));
+			}
+
+			JobMetaData job = m.getJob("jRestore");
+			EXT.runOneShotJob(job, bean, u);
+			webContext.growl(MessageSeverity.info, "Restore Job has been started");
+
+
+		}else
+		{
+			var validationException = new ValidationException();
+			validationException.getMessages().add(new Message(DataMaintenance.MODULE_NAME, messages.getString("modules.admin.DataMaintenance.actions.restore.running")));
+			throw(validationException);
 		}
-		
-		JobMetaData job = m.getJob("jRestore");
-		EXT.runOneShotJob(job, bean, u);
-		webContext.growl(MessageSeverity.info, "Restore Job has been started");
 
 		return new ServerSideActionResult<>(bean);
+
+	}
+
+	private boolean isNoRestoreJobRunning()
+	{
+		try
+		{
+			var runningJobs = EXT.getCustomerRunningJobs();
+			var loggedInUser = ModulesUtil.currentAdminUser();
+
+			for (var jobDescription : runningJobs)
+			{
+				if (jobDescription.getUser().getId().equals(loggedInUser.getBizId()) && (jobDescription.getName().compareTo("jRestore") == 0))
+				{
+					logger.log(Level.WARNING, "Found running Restore job");
+					return false;
+				}
+			}
+
+		}catch(Exception e)
+		{
+			var validationException = new ValidationException();
+			validationException.getMessages().add(new Message(DataMaintenance.MODULE_NAME, messages.getString("modules.admin.DataMaintenance.actions.restore.error")));
+			throw(validationException);
+		}
+
+		return true;
 	}
 }
